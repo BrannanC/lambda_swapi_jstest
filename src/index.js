@@ -137,10 +137,14 @@ function getStarShipTotalCargo(character) {
     0
   );
 }
+// const vehicleTotal = getVehicleTotalCargo(character);
+// const starshipTotal = getStarShipTotalCargo(character);
 function getCargoCapacityTotal(character) {
-  const vehicleTotal = getVehicleTotalCargo(character);
-  const starshipTotal = getStarShipTotalCargo(character);
-  return vehicleTotal + starshipTotal;
+  return [...character.starships, ...character.vehicles].reduce(
+    (acc, cur) =>
+      cur.cargo_capacity ? acc + Number(cur.cargo_capacity) : acc + 0,
+    0
+  );
 }
 
 /**
@@ -198,36 +202,44 @@ function getLargestCargoStarshipModelName(character) {
  */
 function getSlowestVehicleOrStarshipName(character) {
   if (!character.vehicles.length && !character.starships.length) return "none";
-  let vehicleID;
-  let starshipID;
-  vehicleID =
-    !!character.vehicles.length &&
-    character.vehicles.reduce((acc, cur, i, arr) => {
-      return Number(cur.max_atmosphering_speed) <=
-        Number(arr[acc].max_atmosphering_speed)
-        ? i
-        : acc;
-    }, 0);
-  const vehicleSpeed =
-    character.vehicles[vehicleID] &&
-    character.vehicles[vehicleID].max_atmosphering_speed;
-  starshipID =
-    !!character.starships.length &&
-    Number(
-      character.starships.reduce((acc, cur, i, arr) => {
-        return Number(cur.max_atmosphering_speed) <=
-          Number(arr[acc].max_atmosphering_speed)
-          ? i
-          : acc;
-      }, 0)
-    );
-  const starShipSpeed =
-    character.starships[starshipID] &&
-    Number(character.starships[starshipID].max_atmosphering_speed);
-  return starShipSpeed < vehicleSpeed
-    ? character.starships[starshipID].name
-    : character.vehicles[vehicleID] && character.vehicles[vehicleID].name;
+  const all = [...character.starships, ...character.vehicles];
+  const id = all.reduce((acc, cur, i, arr) => {
+    return Number(cur.max_atmosphering_speed) <=
+      Number(arr[acc].max_atmosphering_speed)
+      ? i
+      : acc;
+  }, 0);
+  return all[id].name;
 }
+// let vehicleID;
+// let starshipID;
+// vehicleID =
+//   !!character.vehicles.length &&
+//   character.vehicles.reduce((acc, cur, i, arr) => {
+//     return Number(cur.max_atmosphering_speed) <=
+//       Number(arr[acc].max_atmosphering_speed)
+//       ? i
+//       : acc;
+//   }, 0);
+// const vehicleSpeed =
+//   character.vehicles[vehicleID] &&
+//   character.vehicles[vehicleID].max_atmosphering_speed;
+// starshipID =
+//   !!character.starships.length &&
+//   Number(
+//     character.starships.reduce((acc, cur, i, arr) => {
+//       return Number(cur.max_atmosphering_speed) <=
+//         Number(arr[acc].max_atmosphering_speed)
+//         ? i
+//         : acc;
+//     }, 0)
+//   );
+// const starShipSpeed =
+//   character.starships[starshipID] &&
+//   Number(character.starships[starshipID].max_atmosphering_speed);
+// return starShipSpeed < vehicleSpeed
+//   ? character.starships[starshipID].name
+//   : character.vehicles[vehicleID] && character.vehicles[vehicleID].name;
 
 /// ////// END OF CHALLENGE /////////
 /// ////// END OF CHALLENGE /////////
